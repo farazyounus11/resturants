@@ -24,8 +24,16 @@ st.write(df)
 st.header("Result DataFrame")
 st.write(res)
 
-# Parse coordinates column into separate 'lat' and 'lon' columns
-res[['lat', 'lon']] = res['coordinates'].str.split(',', expand=True).astype(float)
+# Check if the 'coordinates' column exists and is properly formatted
+if 'coordinates' in res.columns:
+    coordinates_split = res['coordinates'].str.split(',', expand=True)
+    if len(coordinates_split.columns) == 2:
+        # Parse coordinates column into separate 'lat' and 'lon' columns
+        res[['lat', 'lon']] = coordinates_split.astype(float)
+    else:
+        st.error("Error: The 'coordinates' column does not have the expected format.")
+else:
+    st.error("Error: The 'coordinates' column does not exist in the DataFrame.")
 
 # Plot the filtered data with PyDeck
 st.header("Plotting with PyDeck")
