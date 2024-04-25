@@ -50,13 +50,14 @@ scatterplot = pdk.Layer(
     "ScatterplotLayer",
     data=res,  # Use filtered DataFrame 'res' here
     get_position="[lon, lat]",
-    get_radius=200,
+    get_radius=100,  # Adjust the radius to make the dots smaller
     get_fill_color=[255, 0, 0],
     pickable=True,
     auto_highlight=True,
 )
 
-view_state = pdk.ViewState(latitude=0, longitude=0, zoom=2, bearing=0, pitch=0)
+# Set the initial view state latitude and longitude to NYC
+view_state = pdk.ViewState(latitude=40.7128, longitude=-74.0060, zoom=10, bearing=0, pitch=0)
 
 tooltip = {
     "text": "Name: {name}\nReview Count: {review_count}\nCategories: {categories}\nRating: {rating}\nPrice: {price}\nLocation: {location}"
