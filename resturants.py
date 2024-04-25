@@ -33,12 +33,8 @@ if 'coordinates' in res.columns:
         # Try to convert the values to float
         try:
             res[['lat', 'lon']] = coordinates_split.astype(float)
-        except ValueError as e:
-            st.error(f"Error: Unable to convert coordinates to float values. Details: {e}")
-            # Print out the problematic values for further investigation
-            st.write("Problematic values in 'coordinates' column:")
-            problematic_values = coordinates_split[~coordinates_split[0].astype(str).str.replace('.', '').str.isdigit() | ~coordinates_split[1].astype(str).str.replace('.', '').str.isdigit()]
-            st.write(problematic_values)
+        except ValueError:
+            st.error("Error: Unable to convert coordinates to float values.")
     else:
         st.error("Error: The 'coordinates' column does not have the expected format.")
 else:
