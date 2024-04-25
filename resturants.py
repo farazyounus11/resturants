@@ -16,7 +16,7 @@ df = df.drop_duplicates(keep='first')
 create_data = {"categories": "text", "name": "text"}
 
 all_widgets = sp.create_widgets(df, create_data)
-res = sp.filter_df(df, all_widgets, ignore_columns=["Coordinates" ,"Price","Display_Phone",])
+res = sp.filter_df(df, all_widgets, ignore_columns=["Coordinates", "Price", "Display_Phone"])
 st.title("Streamlit AutoPandas")
 st.header("Original DataFrame")
 st.write(df)
