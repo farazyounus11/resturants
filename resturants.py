@@ -17,11 +17,8 @@ create_data = {"categories": "text", "name": "text"}
 
 all_widgets = sp.create_widgets(df, create_data)
 res = sp.filter_df(df, all_widgets)
-st.title("Streamlit AutoPandas")
-st.header("Original DataFrame")
-st.write(df)
 
-st.header("Result DataFrame")
+st.header("Filtered DataFrame")
 st.write(res)
 
 # Parse coordinates data
