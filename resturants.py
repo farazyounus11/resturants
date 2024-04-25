@@ -8,7 +8,7 @@ def load_data():
     df = pd.read_csv(file)
     return df
 
-file = "data2.csv"
+file = "data1.csv"
 df = load_data()
 
 df = df.drop_duplicates(keep='first')
