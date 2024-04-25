@@ -16,7 +16,7 @@ df = df.drop_duplicates(keep='first')
 create_data = {"categories": "text", "name": "text"}
 
 all_widgets = sp.create_widgets(df, create_data)
-res = sp.filter_df(df, all_widgets)
+res = sp.filter_df(df, all_widgets, ignore_columns=["Coordinates" ,"Price","Display_Phone",])
 st.title("Streamlit AutoPandas")
 st.header("Original DataFrame")
 st.write(df)
@@ -33,8 +33,12 @@ if 'coordinates' in res.columns:
         # Try to convert the values to float
         try:
             res[['lat', 'lon']] = coordinates_split.astype(float)
-        except ValueError:
-            st.error("Error: Unable to convert coordinates to float values.")
+        except ValueError as e:
+            st.error(f"Error: Unable to convert coordinates to float values. Details: {e}")
+            # Print out the problematic values for further investigation
+            st.write("Problematic values in 'coordinates' column:")
+            problematic_values = coordinates_split[~coordinates_split[0].astype(str).str.replace('.', '').str.isdigit() | ~coordinates_split[1].astype(str).str.replace('.', '').str.isdigit()]
+            st.write(problematic_values)
     else:
         st.error("Error: The 'coordinates' column does not have the expected format.")
 else:
