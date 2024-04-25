@@ -24,12 +24,17 @@ st.write(df)
 st.header("Result DataFrame")
 st.write(res)
 
-# Check if the 'coordinates' column exists and is properly formatted
+# Check if the 'coordinates' column exists
 if 'coordinates' in res.columns:
     coordinates_split = res['coordinates'].str.split(',', expand=True)
+    
+    # Check if the split resulted in two columns
     if len(coordinates_split.columns) == 2:
-        # Parse coordinates column into separate 'lat' and 'lon' columns
-        res[['lat', 'lon']] = coordinates_split.astype(float)
+        # Try to convert the values to float
+        try:
+            res[['lat', 'lon']] = coordinates_split.astype(float)
+        except ValueError:
+            st.error("Error: Unable to convert coordinates to float values.")
     else:
         st.error("Error: The 'coordinates' column does not have the expected format.")
 else:
