@@ -15,12 +15,7 @@ df = df.drop_duplicates(keep='first')
 
 create_data = {"categories": "text", "name": "text"}
 
-# Check if the columns to ignore exist before dropping them
-if all(column in df.columns for column in ["Coordinates", "Price", "Display_Phone"]):
-    all_widgets = sp.create_widgets(df, create_data, ignore_columns=["Coordinates", "Price", "Display_Phone"])
-else:
-    all_widgets = sp.create_widgets(df, create_data)
-
+all_widgets = sp.create_widgets(df, create_data)
 res = sp.filter_df(df, all_widgets)
 st.title("Streamlit AutoPandas")
 st.header("Original DataFrame")
@@ -29,25 +24,22 @@ st.write(df)
 st.header("Result DataFrame")
 st.write(res)
 
-# Check if the 'Coordinates' column exists
-if 'Coordinates' in res.columns:
-    coordinates_split = res['Coordinates'].str.split(',', expand=True)
-    
-    # Check if the split resulted in two columns
-    if len(coordinates_split.columns) == 2:
-        # Try to convert the values to float
-        try:
-            res[['lat', 'lon']] = coordinates_split.astype(float)
-        except ValueError as e:
-            st.error(f"Error: Unable to convert coordinates to float values. Details: {e}")
-            # Print out the problematic values for further investigation
-            st.write("Problematic values in 'Coordinates' column:")
-            problematic_values = coordinates_split[~coordinates_split[0].astype(str).str.replace('.', '').str.isdigit() | ~coordinates_split[1].astype(str).str.replace('.', '').str.isdigit()]
-            st.write(problematic_values)
-    else:
-        st.error("Error: The 'Coordinates' column does not have the expected format.")
-else:
-    st.error("Error: The 'Coordinates' column does not exist in the DataFrame.")
+# Parse coordinates data
+def parse_coordinates(coordinates):
+    try:
+        coordinates = eval(coordinates)  # Evaluate string as dictionary
+        latitude = coordinates['latitude']
+        longitude = coordinates['longitude']
+        return latitude, longitude
+    except Exception as e:
+        st.error(f"Error parsing coordinates: {e}")
+        return None, None
+
+# Apply parse_coordinates function to 'coordinates' column
+res['lat'], res['lon'] = zip(*res['coordinates'].apply(parse_coordinates))
+
+# Filter out rows with missing or invalid coordinates
+res = res.dropna(subset=['lat', 'lon'])
 
 # Plot the filtered data with PyDeck
 st.header("Plotting with PyDeck")
